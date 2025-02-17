@@ -1,5 +1,5 @@
 function loadComponent(id, file) {
-  fetch(file)
+  fetch('../_common/' + file) // 경로 수정
     .then((response) => response.text())
     .then((data) => (document.getElementById(id).innerHTML = data))
     .then(() => {
@@ -9,7 +9,7 @@ function loadComponent(id, file) {
 }
 
 function loadMetaTags(file) {
-  fetch(file)
+  fetch('../_common/' + file) // 경로 수정
     .then((response) => response.text())
     .then((data) => {
       document.head.innerHTML += data;
@@ -17,37 +17,41 @@ function loadMetaTags(file) {
 }
 
 function updateHeaderBasedOnLoginStatus() {
-  const token = localStorage.getItem('token');
-  const signinItem = document.getElementById('signin-item');
-  const registerItem = document.getElementById('register-item');
-  const logoutItem = document.getElementById('logout-item');
-  const myPageItem = document.getElementById('mypage-item');
+  document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('token');
+    const signinItem = document.getElementById('signin-item');
+    const registerItem = document.getElementById('register-item');
+    const logoutItem = document.getElementById('logout-item');
+    const myPageItem = document.getElementById('mypage-item');
 
-  if (token) {
-    // JWT 토큰이 존재하면 (로그인 상태)
-    signinItem.style.display = 'none'; // "Sign in" 버튼 숨김
-    registerItem.style.display = 'none'; // "Register" 버튼 숨김
-    logoutItem.style.display = 'block'; // "Logout" 버튼 표시
-    myPageItem.style.display = 'block'; // "My Page" 버튼 표시
-  } else {
-    // JWT 토큰이 없으면 (로그아웃 상태)
-    signinItem.style.display = 'block'; // "Sign in" 버튼 표시
-    registerItem.style.display = 'block'; // "Register" 버튼 표시
-    logoutItem.style.display = 'none'; // "Logout" 버튼 숨김
-    myPageItem.style.display = 'none'; // "My Page" 버튼 숨김
-  }
+    if (signinItem && registerItem && logoutItem && myPageItem){
+        if (token) {
+            signinItem.style.display = 'none';
+            registerItem.style.display = 'none';
+            logoutItem.style.display = 'block';
+            myPageItem.style.display = 'block';
+        } else {
+            signinItem.style.display = 'block';
+            registerItem.style.display = 'block';
+            logoutItem.style.display = 'none';
+            myPageItem.style.display = 'none';
+        }
+    } else {
+        console.error("header element is missing");
+    }
+  });
 }
 
 function logout() {
-  localStorage.removeItem('token'); // localStorage에서 JWT 토큰 제거
+  localStorage.removeItem('token');
   localStorage.removeItem('user_id');
-  updateHeaderBasedOnLoginStatus(); // 헤더 업데이트
+  updateHeaderBasedOnLoginStatus();
   alert('로그아웃 되었습니다.');
-  window.location.href = '../main01-PYB/index.html'; // 메인 페이지로 이동 (원하는 페이지로 변경 가능)
-
+  window.location.href = '/index.html'; // 절대 경로 사용
+}
   // (선택 사항) 서버에 로그아웃 요청을 보낼 수도 있습니다.
   // fetch("http://localhost:3000/logout", { method: "POST" });
-}
+
 
 // 헤더와 푸터 로드
 loadComponent('header', 'header.html');
